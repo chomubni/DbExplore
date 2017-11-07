@@ -16,7 +16,7 @@ public class PersonHelper extends SQLiteOpenHelper {
     public static final String DATABSE_NAME = "PersonDb";
 
     private static final String createDb = "create table " + PersonEntry.TABLE_NAME + "( "
-            + PersonEntry._ID + " INTEGER, "
+            + PersonEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + PersonEntry.COLUMN_PERSON_FIRST_NAME + " TEXT, "
             + PersonEntry.COLUMN_PERSON_SECOND_NAME + " TEXT, "
             + PersonEntry.COLUMN_PERSON_AGE + " INTEGER);";

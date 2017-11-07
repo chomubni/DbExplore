@@ -1,6 +1,7 @@
 package com.example.ivan.dbexplore;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
@@ -49,19 +50,38 @@ public class MainActivity extends AppCompatActivity {
         getDataBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dataDisplayTextV.setText("Hello");
+                dataDisplayTextV.setText("");
+                retrieveData();
             }
         });
 
         saveDataBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                long columns = saveData();
-                if(columns>0){
-                    dataDisplayTextV.setText(columns+"");
-                }
+                saveData();
             }
         });
+    }
+
+    private void retrieveData() {
+
+        Cursor cursor = sqLiteDatabase.query(PersonEntry.TABLE_NAME,
+                null, null, null, null, null, null);
+        if (cursor != null) {
+            StringBuilder sb = new StringBuilder();
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex(PersonEntry._ID));
+                String fname = cursor.getString(cursor.getColumnIndex(PersonEntry.COLUMN_PERSON_FIRST_NAME));
+                String sname = cursor.getString(cursor.getColumnIndex(PersonEntry.COLUMN_PERSON_SECOND_NAME));
+                int age = cursor.getInt(cursor.getColumnIndex(PersonEntry.COLUMN_PERSON_AGE));
+                sb.append(id + ", ");
+                sb.append(fname + ", ");
+                sb.append(sname + ", ");
+                sb.append(age + "\n\n");
+            }
+            dataDisplayTextV.setText(sb.toString());
+        }
+        cursor.close();
     }
 
     private long saveData() {
@@ -72,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         contentValues.put(PersonEntry.COLUMN_PERSON_AGE, Integer.valueOf(ageEdtx.getText().toString()));
         try {
             rec = sqLiteDatabase.insert(PersonEntry.TABLE_NAME, null, contentValues);
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             Log.d("MySqliteException", ex.toString());
         }
         return rec;
